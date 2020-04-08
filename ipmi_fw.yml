@@ -1,0 +1,22 @@
+---
+#Название PB
+- name: Провера IPMI
+#На какие hosts будем его применять  
+  hosts: ipmi-server
+  gather_facts: no
+  tasks:
+#Проверка состояния IPMI
+    - name: Выполнение команды vpd fw
+      raw: vpd fw
+      register: vpd_fw
+      
+#Проверяем если, не Normal, то пишем в файл
+#    - name: Провера условния на состояни Normal
+#      debug: var!="Normal"
+
+#Вывод состояния IPMI
+    - name: Выводим состояние по прошивке IPMI  в файл
+      local_action:
+       module: copy
+       content: "{{ vpd_fw.stdout }}"
+       dest: "/etc/ansible/IPMIUpdate/{{ group_names }}.{{ inventory_hostname }}.txt"

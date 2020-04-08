@@ -1,0 +1,34 @@
+---
+#Название PB
+- name: Проверка на ошибки
+#На какие hosts будем его применять  
+  hosts: Juniper_all
+#Подключаем необходимый модуль
+  roles:
+  - Juniper.junos 
+  connection: local
+  gather_facts: no
+#Объявим переменную для определения настроек подключения
+  vars:
+    provider_info:
+      host: "{{ inventory_hostname }}"
+      username: "r_ryabcev" 
+      password: "AB9jWS95"
+      port: "22"
+#Прописываем наши задачки
+  tasks:
+#Проверка доступности Juniper
+   - name: Juniper проверка подключения 
+     wait_for:
+      host: "{{ inventory_hostname }}"
+      port: "22"
+      timeout: 10
+#Собираем ошибки по Juniper
+   - name: Получение информации об ошибках Juniper
+     juniper_junos_command:
+      provider: "{{ provider_info }}"
+      commands: 
+      - "show system alarms"
+      - "show chassis alarms"
+      dest: "/etc/ansible/JunAlarmISVN/{{ group_names }}.{{ inventory_hostname }}.txt"
+      format: text

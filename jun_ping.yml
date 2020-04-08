@@ -1,0 +1,11 @@
+---
+#Название PB
+- name: Проверка пароля root на Juniper
+#На какие hosts будем его применять  
+  hosts: impi-server
+
+  tasks:
+#Проверка доступности нашего порта
+    - name: Проверка версий
+      cli_command:
+        commands: "help"

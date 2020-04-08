@@ -1,0 +1,40 @@
+---
+#Название PB
+- name: Смена пароля root на Juniper
+#На какие hosts будем его применять  
+  hosts: Juniper-EX4200 
+#Подключаем необходимый модуль
+  roles:
+  - Juniper.junos 
+  connection: local
+  gather_facts: no
+#Объявим переменную для определения настроек подключения
+  vars:
+    provider_info:
+      host: "{{ inventory_hostname }}"
+      username: "r_ryabcev" 
+      password: "AB9jWS95"
+      port: "22"
+#Прописываем наши задачки
+  tasks:
+#Проверка доступности нашего порта
+  - name: Juniper проверка подключения 
+    wait_for:
+      host: "{{ inventory_hostname }}"
+      port: "22"
+      timeout: 10
+#Убираем ошибку на интерфейсе
+  - name: Juniper убираем ошибку MGMT Интерфейса
+    junos_config:
+     provider: "{{ provider_info }}"
+     lines:
+      - set interfaces ge-0/0/18 disable
+     confirm_commit: yes
+     timeout: 25
+
+#Создает резервную копию
+#  - name: Juniper создаем резервную копию
+#    juniper_junos_command:
+#      provider: "{{ provider_info }}"
+#      commands: 
+#      - "request system configuration rescue save"

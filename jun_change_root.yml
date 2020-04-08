@@ -1,0 +1,32 @@
+---
+#Название PB
+- name: Смена пароля root на Juniper
+#На какие hosts будем его применять  
+  hosts: ???
+#Подключаем необходимый модуль
+  roles:
+  - Juniper.junos 
+  connection: local
+  gather_facts: no
+#Объявим переменную для определения настроек подключения
+  vars:
+    provider_info:
+      host: "{{ inventory_hostname }}"
+      username: "r_ryabcev" 
+      password: "AB9jWS95"
+      port: "22"
+#Прописываем наши задачки
+  tasks:
+#Проверка доступности нашего порта
+  - name: Juniper проверка подключения 
+    wait_for:
+      host: "{{ inventory_hostname }}"
+      port: "22"
+      timeout: 20
+#Изменяем пароль на root
+  - name: Juniper именяем пароль на root
+    junos_config:
+     provider: "{{ provider_info }}"
+     lines:
+      - set system root-authentication encrypted-password $1$1tJYfiAU$Gdal7gtN139NzhJDf4uQ0.
+     confirm_commit: yes

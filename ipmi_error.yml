@@ -1,0 +1,22 @@
+---
+#Название PB
+- name: Провера IPMI
+#На какие hosts будем его применять  
+  hosts: ipmi-server
+  gather_facts: no
+  tasks:
+#Проверка состояния IPMI
+    - name: Проверка состояния IPMI
+      raw: syshealth summary
+      register: ipmi_help
+      
+#Проверяем если, не Normal, то пишем в файл
+#    - name: Провера условния на состояни Normal
+#      debug: var!="Normal"
+
+#Вывод состояния IPMI
+    - name: Выводим состояние IPMI в файл
+      local_action:
+       module: copy
+       content: "{{ ipmi_help.stdout }}"
+       dest: "/etc/ansible/IPMIFailISVN/{{ group_names }}.{{ inventory_hostname }}.txt"

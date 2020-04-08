@@ -1,0 +1,10 @@
+---
+#Название PB
+- name: Провера IPMI
+#На какие hosts будем его применять  
+  hosts: ipmi-server
+  gather_facts: no
+  tasks:
+#Проверка состояния IPMI
+    - name: Сервера выключаются
+      raw: power off

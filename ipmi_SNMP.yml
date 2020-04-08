@@ -1,0 +1,22 @@
+---
+#Название PB
+- name: Провера IPMI
+#На какие hosts будем его применять  
+  hosts: ipmi-server
+  gather_facts: no
+  tasks:
+#Проверка состояния IPMI
+    - name: Выполнение команды SNMP
+      raw: snmp
+      register: snmp_comf
+      
+#Проверяем если, не Normal, то пишем в файл
+#    - name: Провера условния на состояни Normal
+#      debug: var!="Normal"
+
+#Вывод состояния IPMI
+    - name: Выводим состояние по SNMP  в файл
+      local_action:
+       module: copy
+       content: "{{ snmp_comf.stdout }}"
+       dest: "/etc/ansible/IPMISNMP/{{ group_names }}.{{ inventory_hostname }}.txt"

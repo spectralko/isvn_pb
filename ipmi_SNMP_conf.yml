@@ -1,0 +1,10 @@
+---
+#Название PB
+- name: Провера IPMI
+#На какие hosts будем его применять  
+  hosts: ipmi-server
+  gather_facts: no
+  tasks:
+#Конфигурирование SNMP IPMI
+    - name: Настройка SNMP
+      raw: snmp -c2i1 0.0.0.0 -c2i2 10.247.128.52

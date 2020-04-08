@@ -1,0 +1,51 @@
+---
+#- name: Узнаем время на localhost
+#  hosts: localhost
+#  tasks: 
+#   - var: ansible_date_time.date
+#     register: conf_date
+
+
+#Название PB
+- name: Сбор конфигурации Juniper
+#На какие hosts будем его применять  
+  hosts: station_all
+#Подключаем необходимый модуль
+  roles:
+  - Juniper.junos 
+  connection: local
+  gather_facts: no
+#Объявим переменную для определения настроек подключения
+  vars:
+    provider_info:
+      host: "{{ inventory_hostname }}"
+      username: "r_ryabcev" 
+      password: "AB9jWS95"
+      port: "22"
+#Прописываем наши задачки
+  tasks:
+   
+ #Создаем\проверяем недостающие дирректории для конфигов
+   - name: Создаем\проверяем недостающие дирректории для конфигов
+     file:
+      path: /etc/ansible/JunConfISVN/{{ group_names[3] }}
+      state: directory
+#Проверка доступности нашего порта
+#   - name: Juniper проверка подключения
+#     wait_for:
+#      host: "{{ inventory_hostname }}"
+#      port: "22"
+#      timeout: 10
+   - name: Узнаем Hostname
+     juniper_junos_facts:
+      provider: "{{ provider_info }}"
+     register: junos_facts
+#Сбор конфигурации Juniper
+   - name: Сбор конфигурации Juniper и запись в файл
+     juniper_junos_command:
+      provider: "{{ provider_info }}"
+      commands: 
+      - "show configuration"
+      dest: "/etc/ansible/JunConfISVN/{{ group_names[3] }}/{{ junos_facts.facts.hostname }}@{{ lookup('pipe','date +%Y-%m-%d-%H-%M') }}.conf"
+      format: text
+#      timeout: 10

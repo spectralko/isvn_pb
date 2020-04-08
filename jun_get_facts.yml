@@ -1,0 +1,31 @@
+---
+
+- name: Сбор конфигурации Juniper
+#На какие hosts будем его применять  
+  hosts: Алексеевская
+#Подключаем необходимый модуль
+  roles:
+  - Juniper.junos 
+  connection: local
+  gather_facts: no
+#Объявим переменную для определения настроек подключения
+  vars:
+    provider_info:
+      host: "{{ inventory_hostname }}"
+      username: "r_ryabcev" 
+      password: "AB9jWS95"
+      port: "22"
+#Прописываем наши задачки
+  tasks:
+    - name: collect default set of facts and configuration
+      juniper_junos_facts:
+       provider: "{{ provider_info }}"
+      register: junos_facts
+#    - debug:
+#       msg: "{{ junos_facts.facts.hostname }}"
+
+    - name: Retrieve device facts and configuration and save facts to file
+      juniper_junos_config:        
+       provider: "{{ provider_info }}"
+       retrieve: "committed"
+       dest_dir: "/etc/ansible/JunConfISVN/{{ group_names[3] }}/{{ junos_facts.facts.hostname }}.config"
